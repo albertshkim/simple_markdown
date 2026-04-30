@@ -1,5 +1,5 @@
 import streamlit as st
-import plotly.graph_objects as go
+from pathlib import Path
 
 # ───────────────────────────────────────────────
 # 페이지 설정
@@ -7,120 +7,15 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="🌴 육공회 푸꾸옥 여행", layout="wide")
 
 # ───────────────────────────────────────────────
-# 타이틀 HTML
+# 이미지 경로 (같은 폴더)
 # ───────────────────────────────────────────────
-TITLE_HTML = """
-<div class="title-wrapper">
-  <div class="title-bg-decor"></div>
-  <div class="title-tag">✈️ 2026 육공회 특별 여행</div>
-  <h1 class="title-main">
-    <span class="wave">🌊</span>
-    <span class="title-text">푸꾸옥으로</span>
-    <span class="title-highlight"> 떠나자!</span>
-    <span class="wave">🌊</span>
-  </h1>
-  <div class="title-sub">
-    베트남의 <strong>진주섬</strong>에서 만나는 우리들의 특별한 추억
-  </div>
-  <div class="members-row">
-    <span class="member-badge">🧡 금산</span>
-    <span class="member-badge">💛 흥준</span>
-    <span class="member-badge">💚 응석</span>
-    <span class="member-badge">💙 광민</span>
-    <span class="member-badge">💜 선원</span>
-    <span class="member-badge">❤️ 상휘</span>
-  </div>
-  <div class="palm-row">🌴 &nbsp; 🐠 &nbsp; 🦀 &nbsp; 🍹 &nbsp; 🐚 &nbsp; 🌅 &nbsp; 🏄 &nbsp; 🐟 &nbsp; 🌴</div>
-</div>
-"""
-
-# ───────────────────────────────────────────────
-# 지도 생성 함수 (Plotly Geo)
-# ───────────────────────────────────────────────
-def make_map():
-    places = [
-        dict(name="⭐ 푸꾸옥",        lat=10.29, lon=103.98, color="#FF5722", size=28, symbol="star",   pos="top center"),
-        dict(name="호치민시 🏙️",      lat=10.82, lon=106.63, color="#1565C0", size=14, symbol="circle", pos="top right"),
-        dict(name="하노이 🏛️",        lat=21.03, lon=105.85, color="#1565C0", size=13, symbol="circle", pos="top right"),
-        dict(name="다낭 🌊",          lat=16.05, lon=108.22, color="#1976D2", size=11, symbol="circle", pos="top right"),
-        dict(name="프놈펜 🇰🇭",       lat=11.55, lon=104.92, color="#6A1B9A", size=12, symbol="circle", pos="top right"),
-        dict(name="방콕 🇹🇭",         lat=13.75, lon=100.52, color="#00695C", size=12, symbol="circle", pos="top right"),
-        dict(name="쿠알라룸푸르 🇲🇾", lat=3.14,  lon=101.69, color="#558B2F", size=11, symbol="circle", pos="top right"),
-        dict(name="싱가포르 🇸🇬",     lat=1.35,  lon=103.82, color="#E65100", size=11, symbol="circle", pos="bottom right"),
-        dict(name="베이징 🇨🇳",       lat=39.90, lon=116.40, color="#B71C1C", size=11, symbol="circle", pos="bottom right"),
-    ]
-
-    fig = go.Figure()
-
-    # 푸꾸옥 강조 외곽 원 (pulse ring)
-    fig.add_trace(go.Scattergeo(
-        lat=[10.29], lon=[103.98],
-        mode="markers",
-        marker=dict(size=50, color="rgba(255,87,34,0.15)",
-                    symbol="circle", line=dict(width=2.5, color="rgba(255,87,34,0.45)")),
-        showlegend=False, hoverinfo="skip",
-    ))
-
-    # 인천 → 푸꾸옥 항공 점선
-    fig.add_trace(go.Scattergeo(
-        lat=[37.46, 10.29], lon=[126.44, 103.98],
-        mode="lines+markers+text",
-        line=dict(width=2.5, color="#FF9800", dash="dot"),
-        marker=dict(size=[12, 0], color=["#FF9800", "rgba(0,0,0,0)"],
-                    symbol=["circle", "circle"]),
-        text=["✈️ 인천 (약 5시간)", ""],
-        textposition="top right",
-        textfont=dict(size=10, color="#E65100", family="Arial Black"),
-        showlegend=False, hoverinfo="skip",
-    ))
-
-    # 주요 도시 마커 + 텍스트
-    fig.add_trace(go.Scattergeo(
-        lat=[p["lat"] for p in places],
-        lon=[p["lon"] for p in places],
-        text=[p["name"] for p in places],
-        mode="markers+text",
-        marker=dict(
-            size=[p["size"] for p in places],
-            color=[p["color"] for p in places],
-            symbol=[p["symbol"] for p in places],
-            line=dict(width=1.5, color="white"),
-            opacity=0.95,
-        ),
-        textfont=dict(size=11, color="#212121", family="Arial Black"),
-        textposition=[p["pos"] for p in places],
-        showlegend=False,
-        hovertemplate="<b>%{text}</b><extra></extra>",
-    ))
-
-    fig.update_layout(
-        geo=dict(
-            scope="asia",
-            center=dict(lat=15, lon=107),
-            projection_type="mercator",
-            projection_scale=4.8,
-            showland=True,      landcolor="#EEF7ED",
-            showocean=True,     oceancolor="#C9E8F5",
-            showcoastlines=True, coastlinecolor="#90A4AE", coastlinewidth=1,
-            showcountries=True,  countrycolor="#B0BEC5",  countrywidth=1,
-            showlakes=True,     lakecolor="#C9E8F5",
-            showrivers=True,    rivercolor="#BBDEFB", riverwidth=0.5,
-            resolution=50,
-            bgcolor="rgba(0,0,0,0)",
-        ),
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=0, r=0, t=0, b=0),
-        height=530,
-        showlegend=False,
-    )
-    return fig
-
+MAP_IMAGE   = Path(__file__).parent / "puku.png"
+FRIEND_IMAGE = Path(__file__).parent / "fri.png"
 
 # ───────────────────────────────────────────────
 # CSS
 # ───────────────────────────────────────────────
-FULLSCREEN_CSS = """
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
@@ -132,7 +27,7 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stMainBlockContainer"] { max-width: 100% !important; padding: 0 !important; }
 [data-testid="stMain"] { padding: 0 !important; }
 
-.markdown-wrapper {
+.wrapper {
     max-width: 900px;
     margin: 30px auto 60px auto;
     padding: 0 40px 60px 40px;
@@ -145,135 +40,168 @@ html, body, [data-testid="stAppViewContainer"] {
     overflow: hidden;
 }
 
-/* 타이틀 */
-.title-wrapper {
+/* ── 타이틀 배너 ── */
+.title-banner {
     position: relative;
-    background: linear-gradient(135deg, #00897b 0%, #00acc1 50%, #43a047 100%);
-    padding: 50px 40px 40px 40px;
+    background: linear-gradient(135deg, #00897b 0%, #00acc1 55%, #43a047 100%);
+    padding: 52px 40px 42px 40px;
     text-align: center;
-    overflow: hidden;
     margin: 0 -40px 40px -40px;
+    overflow: hidden;
 }
-.title-bg-decor {
-    position: absolute; top: -60px; right: -60px;
-    width: 240px; height: 240px;
-    background: rgba(255,255,255,0.08); border-radius: 50%;
+.title-banner::before {
+    content: "";
+    position: absolute; top: -70px; right: -70px;
+    width: 260px; height: 260px;
+    background: rgba(255,255,255,0.07); border-radius: 50%;
 }
-.title-tag {
+.title-banner::after {
+    content: "";
+    position: absolute; bottom: -50px; left: -50px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.05); border-radius: 50%;
+}
+.title-chip {
     display: inline-block;
-    background: rgba(255,255,255,0.2); color: #fff;
-    font-size: 0.9rem; font-weight: 700;
-    padding: 6px 18px; border-radius: 20px;
-    margin-bottom: 18px; letter-spacing: 1px;
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.22);
+    color: #fff; font-size: 0.88rem; font-weight: 700;
+    padding: 5px 18px; border-radius: 20px; margin-bottom: 16px;
+    border: 1px solid rgba(255,255,255,0.35); letter-spacing: 1px;
 }
 .title-main {
-    font-size: 3.2rem; font-weight: 900; color: #fff;
-    margin: 0 0 12px 0;
-    text-shadow: 0 4px 24px rgba(0,0,0,0.2); line-height: 1.2;
+    font-size: 3rem; font-weight: 900; color: #fff;
+    margin: 0 0 10px 0;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.2); line-height: 1.25;
 }
 .title-highlight { color: #fff9c4; font-style: italic; }
 .wave { display: inline-block; animation: sway 2s ease-in-out infinite; }
-.wave:last-child { animation-delay: 0.5s; }
+.wave:last-child { animation-delay: 0.6s; }
 @keyframes sway {
-    0%,100% { transform: rotate(-10deg) scale(1); }
-    50%      { transform: rotate(10deg) scale(1.1); }
+    0%,100% { transform: rotate(-10deg) scale(1.0); }
+    50%      { transform: rotate(10deg)  scale(1.12); }
 }
-.title-sub { font-size: 1.1rem; color: rgba(255,255,255,0.92); margin-bottom: 24px; }
+.title-sub { font-size: 1.08rem; color: rgba(255,255,255,0.9); margin-bottom: 26px; }
 .members-row {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 24px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 26px;
 }
-.member-badge {
+.mbadge {
     background: rgba(255,255,255,0.22); color: #fff;
-    font-size: 1rem; font-weight: 700;
-    padding: 7px 18px; border-radius: 50px;
-    border: 1.5px solid rgba(255,255,255,0.5);
-    transition: all 0.2s; cursor: default;
+    font-size: 0.98rem; font-weight: 700;
+    padding: 7px 20px; border-radius: 50px;
+    border: 1.5px solid rgba(255,255,255,0.45);
+    transition: all .2s; cursor: default;
 }
-.member-badge:hover {
+.mbadge:hover {
     background: rgba(255,255,255,0.38);
-    transform: translateY(-3px) scale(1.08);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    transform: translateY(-3px) scale(1.07);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.14);
 }
-.palm-row { font-size: 1.6rem; letter-spacing: 4px; opacity: 0.85; }
+.emoji-row { font-size: 1.55rem; letter-spacing: 5px; opacity: 0.88; }
 
-/* 지도 */
-.map-section-label {
+/* ── 섹션 공통 ── */
+.section-label {
     font-size: 1.05rem; font-weight: 700; color: #00695c;
-    margin: 8px 0 10px 0; padding-left: 4px;
+    margin: 4px 0 10px 0; padding-left: 4px;
 }
-.map-caption {
+.img-frame {
+    border-radius: 16px; overflow: hidden;
+    border: 2px solid #b2dfdb;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+.caption {
     text-align: center; font-size: 0.87rem; color: #546e7a;
-    font-style: italic; margin-top: 6px; margin-bottom: 20px;
-}
-.map-border {
-    border: 2px solid #b2dfdb; border-radius: 16px;
-    overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    font-style: italic; margin-top: 8px; margin-bottom: 20px;
 }
 
-/* 본문 */
-.markdown-wrapper h2 {
+/* ── 본문 ── */
+.wrapper h2 {
     font-size: 1.55rem; color: #00695c;
     margin-top: 44px; margin-bottom: 14px;
     border-left: 5px solid #26c6da; padding-left: 14px;
 }
-.markdown-wrapper hr { border: none; border-top: 2px dashed #b2dfdb; margin: 32px 0; }
-.markdown-wrapper blockquote {
+.wrapper hr { border: none; border-top: 2px dashed #b2dfdb; margin: 30px 0; }
+.wrapper blockquote {
     border-left: 4px solid #26c6da; background: #e0f7fa;
     padding: 14px 22px; border-radius: 0 10px 10px 0;
     color: #006064; font-style: italic; margin: 20px 0;
 }
-.markdown-wrapper table {
+.wrapper table {
     width: 100%; border-collapse: collapse; margin: 20px 0;
     border-radius: 10px; overflow: hidden;
     box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
-.markdown-wrapper th { background: #00897b; color: #fff; padding: 12px 16px; text-align: left; }
-.markdown-wrapper td { padding: 10px 16px; border-bottom: 1px solid #e0f2f1; }
-.markdown-wrapper tr:hover td { background: #e0f7fa; }
+.wrapper th { background: #00897b; color: #fff; padding: 12px 16px; text-align: left; }
+.wrapper td { padding: 10px 16px; border-bottom: 1px solid #e0f2f1; }
+.wrapper tr:hover td { background: #e0f7fa; }
 
-/* 푸터 */
-.fun-footer {
-    text-align: center; padding: 36px 20px 20px 20px;
-    margin: 40px -40px -60px -40px;
+/* ── 푸터 ── */
+.footer {
+    text-align: center; padding: 36px 20px 22px 20px;
+    margin: 44px -40px -60px -40px;
     background: linear-gradient(135deg, #00897b, #26c6da); color: #fff;
 }
-.footer-wave { font-size: 1.2rem; opacity: 0.5; margin-bottom: 12px; letter-spacing: 2px; }
+.footer-wave { font-size: 1.15rem; opacity: 0.45; margin-bottom: 12px; letter-spacing: 2px; }
 .footer-text { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; line-height: 1.8; }
-.footer-emojis { font-size: 1.5rem; letter-spacing: 6px; margin-bottom: 20px; }
+.footer-emojis { font-size: 1.45rem; letter-spacing: 6px; margin-bottom: 18px; }
 </style>
-"""
+""", unsafe_allow_html=True)
 
 # ───────────────────────────────────────────────
-# 렌더링
+# 레이아웃 시작
 # ───────────────────────────────────────────────
-st.markdown(FULLSCREEN_CSS, unsafe_allow_html=True)
-st.markdown('<div class="markdown-wrapper">', unsafe_allow_html=True)
+st.markdown('<div class="wrapper">', unsafe_allow_html=True)
 
-# ① 타이틀
-st.markdown(TITLE_HTML, unsafe_allow_html=True)
-
-# ② 지도 레이블
+# ① 타이틀 배너
 st.markdown("""
-<div class="map-section-label">
-  📍 <strong>푸꾸옥 위치</strong> — 베트남 최남단, 캄보디아 접경 타이만의 진주섬
+<div class="title-banner">
+  <div class="title-chip">✈️ 2026 육공회 특별 여행</div>
+  <h1 class="title-main">
+    <span class="wave">🌊</span>
+    푸꾸옥으로
+    <span class="title-highlight"> 떠나자!</span>
+    <span class="wave">🌊</span>
+  </h1>
+  <div class="title-sub">베트남의 <strong>진주섬</strong>에서 만나는 우리들의 특별한 추억</div>
+  <div class="members-row">
+    <span class="mbadge">🧡 금산</span>
+    <span class="mbadge">💛 흥준</span>
+    <span class="mbadge">💚 응석</span>
+    <span class="mbadge">💙 광민</span>
+    <span class="mbadge">💜 선원</span>
+    <span class="mbadge">❤️ 상휘</span>
+  </div>
+  <div class="emoji-row">🌴 🐠 🦀 🍹 🐚 🌅 🏄 🐟 🌴</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ③ Plotly 지도
-st.markdown('<div class="map-border">', unsafe_allow_html=True)
-st.plotly_chart(make_map(), use_container_width=True, config={"displayModeBar": False})
-st.markdown('</div>', unsafe_allow_html=True)
+# ② 친구들 사진
+if FRIEND_IMAGE.exists():
+    st.markdown('<div class="section-label">📸 우리들의 이야기</div>', unsafe_allow_html=True)
+    st.markdown('<div class="img-frame">', unsafe_allow_html=True)
+    st.image(str(FRIEND_IMAGE), use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="caption">🤝 육공회 — 함께라서 더 즐거운 여행!</div>', unsafe_allow_html=True)
+else:
+    st.info("📸 fri.png 파일을 같은 폴더에 넣어주세요.")
 
-# 지도 범례 캡션
-st.markdown("""
-<div class="map-caption">
-  ⭐ 붉은 별 = 푸꾸옥 &nbsp;|&nbsp; 🔵 파란 점 = 베트남 주요 도시 &nbsp;|&nbsp;
-  🟠 주황 점선 = 인천 직항 항공 (약 5시간) &nbsp;|&nbsp; 🌏 주변 국가 수도 표시
-</div>
-""", unsafe_allow_html=True)
+st.markdown("---")
 
-# ④ 기본 정보 + 본문
+# ③ 위치 지도 이미지
+st.markdown('<div class="section-label">📍 푸꾸옥 위치 — 베트남 최남단, 타이만의 진주섬</div>', unsafe_allow_html=True)
+
+if MAP_IMAGE.exists():
+    st.markdown('<div class="img-frame">', unsafe_allow_html=True)
+    st.image(str(MAP_IMAGE), use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="caption">
+      🗺️ 호치민시에서 서쪽으로 약 260km &nbsp;·&nbsp; 캄보디아 국경 근처 &nbsp;·&nbsp; 면적 574km²
+    </div>
+    """, unsafe_allow_html=True)
+else:
+    st.info("🗺️ puku.png 파일을 같은 폴더에 넣어주세요.")
+
+# ④ 기본 정보 & 본문
 st.markdown("""
 ---
 
@@ -351,11 +279,11 @@ st.markdown("""
 
 # ⑤ 푸터
 st.markdown("""
-<div class="fun-footer">
+<div class="footer">
   <div class="footer-wave">〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰</div>
   <div class="footer-text">
     🌺 육공회의 행복한 여행을 응원합니다! 🌺<br>
-    <span style="font-size:0.85rem; opacity:0.7;">좋은 추억 가득한 푸꾸옥 여행 되세요 🌊✨</span>
+    <span style="font-size:0.85rem; opacity:0.75;">좋은 추억 가득한 푸꾸옥 여행 되세요 🌊✨</span>
   </div>
   <div class="footer-emojis">🌴 🐠 🍹 🌅 🐚 🦀 🏄 🌊 🌴</div>
 </div>
