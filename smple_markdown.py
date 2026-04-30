@@ -1,15 +1,63 @@
 import streamlit as st
 
 # ───────────────────────────────────────────────
-# 마크다운 내용
+# 타이틀 HTML (재미있고 화려한 디자인)
 # ───────────────────────────────────────────────
-MARKDOWN_CONTENT = """
----
-# 육공회 회원 여러분의 즐거운 여행이 되세요(금산,흥준,응석,광민,선원,상휘~~)
----
+TITLE_HTML = """
+<div class="title-wrapper">
+  <div class="title-bg-decor"></div>
 
-푸꾸옥은 베트남의 **"진주섬"**으로 불리는 최고의 휴양지입니다! 🌴
+  <div class="title-tag">✈️ 2026 육공회 특별 여행</div>
 
+  <h1 class="title-main">
+    <span class="wave">🌊</span>
+    <span class="title-text">푸꾸옥으로</span>
+    <span class="title-highlight"> 떠나자!</span>
+    <span class="wave">🌊</span>
+  </h1>
+
+  <div class="title-sub">
+    베트남의 <strong>진주섬</strong>에서 만나는 우리들의 특별한 추억
+  </div>
+
+  <div class="members-row">
+    <span class="member-badge">🧡 금산</span>
+    <span class="member-badge">💛 흥준</span>
+    <span class="member-badge">💚 응석</span>
+    <span class="member-badge">💙 광민</span>
+    <span class="member-badge">💜 선원</span>
+    <span class="member-badge">❤️ 상휘</span>
+  </div>
+
+  <div class="palm-row">🌴 &nbsp; 🐠 &nbsp; 🦀 &nbsp; 🍹 &nbsp; 🐚 &nbsp; 🌅 &nbsp; 🏄 &nbsp; 🐟 &nbsp; 🌴</div>
+</div>
+"""
+
+# ───────────────────────────────────────────────
+# 지도 HTML (OpenStreetMap iframe)
+# ───────────────────────────────────────────────
+MAP_HTML = """
+<div class="map-section">
+  <div class="map-label">
+    📍 <strong>푸꾸옥 위치</strong> — 베트남 최남단 타이만의 진주
+  </div>
+  <div class="map-container">
+    <iframe
+      src="https://www.openstreetmap.org/export/embed.html?bbox=103.8&amp;lat=10.22&amp;lon=103.98&amp;zoom=10&amp;marker=10.22,103.98&amp;layers=M"
+      style="width:100%; height:420px; border:none; border-radius:14px;"
+      allowfullscreen>
+    </iframe>
+  </div>
+  <div class="map-caption">
+    🗺️ 호치민시에서 서쪽으로 약 260km · 캄보디아 국경 근처 · 면적 574km²
+  </div>
+</div>
+"""
+
+# ───────────────────────────────────────────────
+# 본문 마크다운 (타이틀·지도 제외)
+# ───────────────────────────────────────────────
+BODY_MARKDOWN = """
 ---
 
 ## 🏝️ 푸꾸옥 (Phú Quốc) 기본 정보
@@ -22,7 +70,9 @@ MARKDOWN_CONTENT = """
 
 ---
 
-## 🌤️ 날씨 & 여행 적기| 시기 | 날씨 |
+## 🌤️ 날씨 & 여행 적기
+
+| 시기 | 날씨 |
 |------|------|
 | **11월 ~ 4월** | ☀️ 건기 — 최고 여행 시즌, 맑고 파란 바다 |
 | **5월 ~ 10월** | 🌧️ 우기 — 비가 잦지만 여행객 적고 숙박비 저렴 |
@@ -37,7 +87,9 @@ MARKDOWN_CONTENT = """
 
 **바이사오 (Bãi Sao)** — 새하얀 모래와 에메랄드빛 바다, 푸꾸옥에서 가장 아름다운 해변으로 꼽힘
 
-**옹랑 비치 (Ông Lang)** — 조용하고 한적한 분위기, 배낭여행자에게 인기---
+**옹랑 비치 (Ông Lang)** — 조용하고 한적한 분위기, 배낭여행자에게 인기
+
+---
 
 ## 🎡 주요 관광지 & 액티비티
 
@@ -78,148 +130,290 @@ MARKDOWN_CONTENT = """
 - 최근 카지노, 고급 리조트 급증으로 **세계적인 럭셔리 여행지**로 급부상 중
 
 베트남에서 가장 빠르게 개발되고 있는 섬으로, 지금 가는 게 자연이 더 남아있을 때 가는 거라는 말도 있을 정도입니다! 😄
-
 """
 
 # ───────────────────────────────────────────────
-# 전체화면 스타일 CSS
+# 푸터 HTML
+# ───────────────────────────────────────────────
+FOOTER_HTML = """
+<div class="fun-footer">
+  <div class="footer-wave">〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰〰</div>
+  <div class="footer-text">
+    🌺 육공회의 행복한 여행을 응원합니다! 🌺<br>
+    <span style="font-size:0.85rem; opacity:0.7;">좋은 추억 가득한 푸꾸옥 여행 되세요 🌊✨</span>
+  </div>
+  <div class="footer-emojis">🌴 🐠 🍹 🌅 🐚 🦀 🏄 🌊 🌴</div>
+</div>
+"""
+
+# ───────────────────────────────────────────────
+# 전체 CSS
 # ───────────────────────────────────────────────
 FULLSCREEN_CSS = """
 <style>
-/* 전체 배경 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Pacifico&display=swap');
+
 html, body, [data-testid="stAppViewContainer"] {
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 50%, #fff9c4 100%);
     color: #1a1a1a;
 }
 
-/* 사이드바 및 헤더 숨기기 */
 [data-testid="stSidebar"],
 [data-testid="stHeader"],
-footer {
-    display: none !important;
-}
+footer { display: none !important; }
 
-/* 메인 컨테이너 전체 너비 */
 [data-testid="stMainBlockContainer"] {
     max-width: 100% !important;
     padding: 0 !important;
 }
-[data-testid="stMain"] {
-    padding: 0 !important;
-}
+[data-testid="stMain"] { padding: 0 !important; }
 
-/* 마크다운 래퍼 */
+/* ── 전체 래퍼 ── */
 .markdown-wrapper {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 60px 40px 100px 40px;
-    font-family: 'Georgia', serif;
+    max-width: 880px;
+    margin: 30px auto 60px auto;
+    padding: 0 40px 60px 40px;
+    font-family: 'Noto Sans KR', sans-serif;
     line-height: 1.9;
     color: #1a1a1a;
-    background-color: #ffffff;
-    box-shadow: 0 2px 24px rgba(0,0,0,0.08);
-    border-radius: 12px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 8px 48px rgba(0,150,136,0.12);
+    border-radius: 24px;
+    overflow: hidden;
 }
 
-.markdown-wrapper h1 {
-    font-size: 2.6rem;
-    color: #1e3a5f;
-    border-bottom: 2px solid #d0dce8;
-    padding-bottom: 12px;
-    margin-bottom: 28px;
+/* ── 타이틀 섹션 ── */
+.title-wrapper {
+    position: relative;
+    background: linear-gradient(135deg, #00897b 0%, #00acc1 50%, #43a047 100%);
+    padding: 50px 40px 40px 40px;
+    text-align: center;
+    overflow: hidden;
+    margin: 0 -40px 40px -40px;
 }
 
+.title-bg-decor {
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+}
+
+.title-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.title-main {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    line-height: 1.2;
+}
+
+.title-highlight {
+    color: #fff9c4;
+    font-style: italic;
+}
+
+.wave {
+    display: inline-block;
+    animation: sway 2s ease-in-out infinite;
+}
+.wave:last-child { animation-delay: 0.5s; }
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-10deg) scale(1); }
+    50%       { transform: rotate(10deg)  scale(1.1); }
+}
+
+.title-sub {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.92);
+    margin-bottom: 24px;
+}
+
+.members-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.member-badge {
+    background: rgba(255,255,255,0.22);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 50px;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    transition: all 0.2s;
+    cursor: default;
+}
+.member-badge:hover {
+    background: rgba(255,255,255,0.38);
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.palm-row {
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+    opacity: 0.85;
+}
+
+/* ── 지도 섹션 ── */
+.map-section {
+    margin: 36px 0;
+}
+
+.map-label {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #00695c;
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+.map-container {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    border: 2px solid #b2dfdb;
+}
+
+.map-caption {
+    margin-top: 10px;
+    font-size: 0.88rem;
+    color: #546e7a;
+    text-align: center;
+    font-style: italic;
+}
+
+/* ── 본문 스타일 ── */
 .markdown-wrapper h2 {
-    font-size: 1.7rem;
-    color: #2563a8;
-    margin-top: 48px;
-    margin-bottom: 16px;
-}
-
-.markdown-wrapper h3 {
-    font-size: 1.2rem;
-    color: #1e3a5f;
+    font-size: 1.6rem;
+    color: #00695c;
+    margin-top: 44px;
+    margin-bottom: 14px;
+    border-left: 5px solid #26c6da;
+    padding-left: 14px;
 }
 
 .markdown-wrapper hr {
     border: none;
-    border-top: 1px solid #e0e7ef;
-    margin: 36px 0;
+    border-top: 2px dashed #b2dfdb;
+    margin: 32px 0;
 }
 
 .markdown-wrapper blockquote {
-    border-left: 4px solid #2563a8;
-    background: #f0f5fb;
-    padding: 16px 24px;
-    border-radius: 0 8px 8px 0;
-    color: #2a4a6b;
+    border-left: 4px solid #26c6da;
+    background: #e0f7fa;
+    padding: 14px 22px;
+    border-radius: 0 10px 10px 0;
+    color: #006064;
     font-style: italic;
-    margin: 24px 0;
-}
-
-.markdown-wrapper code {
-    background: #f0f4f8;
-    color: #c0392b;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-family: 'Fira Code', monospace;
-    font-size: 0.9em;
-    border: 1px solid #dce3ea;
-}
-
-.markdown-wrapper pre {
-    background: #f7f9fb;
-    border: 1px solid #dce3ea;
-    border-radius: 10px;
-    padding: 20px;
-    overflow-x: auto;
-}
-
-.markdown-wrapper pre code {
-    background: none;
-    color: #2d3748;
-    padding: 0;
-    border: none;
+    margin: 20px 0;
 }
 
 .markdown-wrapper table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
 .markdown-wrapper th {
-    background: #e8f0f8;
-    color: #1e3a5f;
+    background: #00897b;
+    color: #fff;
     padding: 12px 16px;
     text-align: left;
-    border-bottom: 2px solid #c5d5e8;
 }
 
 .markdown-wrapper td {
     padding: 10px 16px;
-    border-bottom: 1px solid #e8edf3;
+    border-bottom: 1px solid #e0f2f1;
 }
 
 .markdown-wrapper tr:hover td {
-    background: #f5f8fc;
+    background: #e0f7fa;
 }
 
-.markdown-wrapper a {
-    color: #2563a8;
-    text-decoration: underline;
+/* ── 푸터 ── */
+.fun-footer {
+    text-align: center;
+    padding: 36px 20px 10px 20px;
+    margin: 40px -40px -60px -40px;
+    background: linear-gradient(135deg, #00897b, #26c6da);
+    color: #fff;
+}
+
+.footer-wave {
+    font-size: 1.2rem;
+    opacity: 0.5;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.8;
+}
+
+.footer-emojis {
+    font-size: 1.5rem;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
 }
 </style>
 """
 
 # ───────────────────────────────────────────────
-# CSS 주입 및 마크다운 렌더링
+# 렌더링
 # ───────────────────────────────────────────────
 st.markdown(FULLSCREEN_CSS, unsafe_allow_html=True)
 
-st.markdown(
-    f'<div class="markdown-wrapper">{MARKDOWN_CONTENT}</div>',
-    unsafe_allow_html=True
-)
+st.markdown('<div class="markdown-wrapper">', unsafe_allow_html=True)
+
+# 1) 재미있는 타이틀
+st.markdown(TITLE_HTML, unsafe_allow_html=True)
+
+# 2) 기본 정보 & 지도
+st.markdown("""
+## 🏝️ 푸꾸옥 (Phú Quốc) 기본 정보
+
+- **위치**: 베트남 최남단, 캄보디아 국경 근처 타이만(Gulf of Thailand)
+- **면적**: 약 574km² — 베트남에서 가장 큰 섬
+- **행정**: 끼엔장(Kiên Giang)성 소속, **섬 전체가 하나의 시(市)**로 승격 (2021년)
+- **인구**: 약 18만 명
+- **별명**: 진주섬 (Đảo Ngọc)
+""")
+
+# 지도 삽입
+st.markdown(MAP_HTML, unsafe_allow_html=True)
+
+# 3) 나머지 본문
+st.markdown(BODY_MARKDOWN)
+
+# 4) 푸터
+st.markdown(FOOTER_HTML, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
